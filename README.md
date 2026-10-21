@@ -18,7 +18,7 @@ Auto-Payments-PK is designed to **verify an incoming transfer against a trusted 
 - Supabase/Postgres-backed one-time payment claims to prevent a single transfer from being reused for different orders.
 - Public health and bank-directory endpoints, tests, a database schema, and an environment-variable template.
 
-**Important:** `BANK_ADAPTERS_JSON.json` is the committed bank/wallet catalogue and is bundled with the Vercel functions. It currently contains 54 profiles, but only NayaPay is enabled because the repository includes a working example for its alert email. Other profiles are present for discovery and transparency, but remain disabled until the exact sender address and transaction-email fields can be confirmed from a genuine, redacted message. SBP's general alert policy and a bank's public contact email do not prove the transaction-alert sender. Guessing them could incorrectly confirm a payment. Public sources are recorded in each profile's `source_urls` field.
+**Important:** `BANK_ADAPTERS_JSON.json` is the committed bank/wallet catalogue and is bundled with the Vercel functions. It currently contains 54 profiles, but only NayaPay is enabled because the repository includes a working example for its alert email. Other profiles remain disabled until the exact sender address and transaction-email fields can be confirmed from genuine, redacted messages and covered by tests. No `source_urls` or `official_references` fields are required in a profile. See [BANK_ADAPTERS_GUIDE.md](BANK_ADAPTERS_GUIDE.md) for a copy-paste AI prompt that analyzes a redacted bank email and returns one candidate JSON profile.
 
 ## Architecture
 
@@ -71,7 +71,7 @@ Copy .env.example to a local .env for local testing. Never commit .env or real c
 
 ## Bank catalogue and adding adapters
 
-The repository's `BANK_ADAPTERS_JSON.json` file is the source-controlled catalogue. It includes bank and wallet names, institution type, official source links, current activation state, and notes on what remains to be verified. Vercel is configured to bundle this file with both `/api/banks` and `/api/verify`; you do not need to paste the entire catalogue into a Vercel environment variable.
+The repository's `BANK_ADAPTERS_JSON.json` file is the source-controlled catalogue. Each profile includes a display name, institution type, activation state, exact sender allowlist, parsing regexes, and an optional `note`. Source URLs are not part of the profile schema. Vercel is configured to bundle this file with both `/api/banks` and `/api/verify`; you do not need to paste the entire catalogue into a Vercel environment variable. To prepare a new profile from a real notification, follow [BANK_ADAPTERS_GUIDE.md](BANK_ADAPTERS_GUIDE.md).
 
 The `GET /api/banks` response tells you which entries are configured. At this point, only NayaPay is enabled. A bank listed with `status: "needs_verified_email_sample"` is not an active integration.
 
@@ -85,7 +85,7 @@ To activate a bank or wallet:
 
 Use `BANK_ADAPTERS_JSON` only if you need an environment-specific override. It must be a JSON object keyed by adapter slug. Environment entries replace the same slug from the file; they do not need to repeat all other catalogue entries. Never put credentials in the JSON file or in a client-side environment variable.
 
-Research references in the catalogue include the [SBP digital-transaction-alert circular](https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022), [SBP's commercial-bank directory](https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks), [SBP's microfinance-bank directory](https://www.sbp.org.pk/sbp-regulated-institutions/microfinance-banks), and the [authorized EMI list](https://www.sbp.org.pk/ps/PDF/List-of-EMIs.pdf). These sources identify institutions or the general alert policy; they do not disclose all transaction-email senders and message layouts.
+Use [BANK_ADAPTERS_GUIDE.md](BANK_ADAPTERS_GUIDE.md) for the full AI prompt, redaction guidance, expected JSON format, and safe activation workflow. Official bank directories and general alert policies cannot establish a provider-specific transaction-email sender or template.
 
 ## API
 
@@ -148,17 +148,22 @@ Do not interpret not_found as proof the customer did not pay. Alert delivery and
 
 ## Adding another bank or wallet
 
-Use BANK_ADAPTERS_JSON to register a provider whose notification format you have actually tested. The value must be a JSON object keyed by bank slug. Each adapter needs a display name, an exact sender allowlist, and regexes with a capture group for the transaction ID and amount. An optional total-amount regex adds another consistency check.
+For the main catalogue, add the new profile to `BANK_ADAPTERS_JSON.json`. Follow [BANK_ADAPTERS_GUIDE.md](BANK_ADAPTERS_GUIDE.md) to generate a candidate profile from a redacted raw email with AI, merge it into the file, write synthetic tests, and only then enable it. Each enabled adapter needs an exact sender allowlist and tested regexes with capture groups for the transaction ID and credited amount. An optional total-amount regex adds another consistency check. The `BANK_ADAPTERS_JSON` environment variable is for environment-specific overrides, not a replacement for the committed catalogue.
 
 Example (replace the sample sender and patterns with values verified against that provider's real email template):
 
     {
       "my-bank": {
         "name": "My Bank",
+        "institution_type": "commercial_bank",
+        "enabled": false,
+        "status": "needs_parser_tests",
+        "alert_channel": "email",
         "sender_allowlist": ["alerts@example-bank.test"],
         "transaction_id_regex": "(?:Transaction ID|Reference No)\\s*[:#-]?\\s*([A-Z0-9-]{8,40})",
         "amount_regex": "(?:Amount Credited|Transaction Amount)\\s*[:#-]?\\s*(?:PKR|Rs\\.? )?([0-9,]+(?:\\.[0-9]{1,2})?)",
-        "total_amount_regex": "(?:Total Amount)\\s*[:#-]?\\s*(?:PKR|Rs\\.? )?([0-9,]+(?:\\.[0-9]{1,2})?)"
+        "total_amount_regex": "(?:Total Amount)\\s*[:#-]?\\s*(?:PKR|Rs\\.? )?([0-9,]+(?:\\.[0-9]{1,2})?)",
+        "note": "Example only; replace with a tested provider-specific profile."
       }
     }
 
