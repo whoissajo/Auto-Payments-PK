@@ -8,6 +8,18 @@
     "api/banks.py": {
       "maxDuration": 10,
       "includeFiles": "BANK_ADAPTERS_JSON.json"
+    },
+    "api/generate.py": {
+      "maxDuration": 15,
+      "includeFiles": "BANK_ADAPTERS_JSON.json"
+    },
+    "api/genrate.py": {
+      "maxDuration": 15,
+      "includeFiles": "BANK_ADAPTERS_JSON.json"
+    },
+    "api/status.py": {
+      "maxDuration": 30,
+      "includeFiles": "BANK_ADAPTERS_JSON.json"
     }
   }
 }
