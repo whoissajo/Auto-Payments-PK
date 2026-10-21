@@ -72,11 +72,11 @@ NAYAPAY_ADAPTER = {
         r"Transaction\s+ID\s*[:\-]?\s*([A-Z0-9]{10,})"
     ),
     "amount_regex": (
-        r"Amount\s+Received\b.{0,160}?(?:Rs\.?|PKR)\s*"
+        r"Amount\s+Received\s*(?:[:\-]\s*)?(?:Rs\.?|PKR)\s*"
         r"([\d,]+(?:\.\d{1,2})?)"
     ),
     "total_amount_regex": (
-        r"Total\s+Amount\b.{0,160}?(?:Rs\.?|PKR)\s*"
+        r"Total\s+Amount\s*(?:[:\-]\s*)?(?:Rs\.?|PKR)\s*"
         r"([\d,]+(?:\.\d{1,2})?)"
     ),
 }
@@ -548,17 +548,23 @@ def _db_request(method: str, query: dict[str, str] | None = None, payload: dict[
     if query:
         url += "?" + urllib.parse.urlencode(query)
     data = None if payload is None else json.dumps(payload, separators=(",", ":")).encode("utf-8")
+    headers = {
+        # Supabase requires the API key header. Legacy service_role keys are JWTs
+        # and also work as a Bearer token. Modern sb_secret_* keys are not JWTs,
+        # so do not send them as Authorization: Bearer or PostgREST may reject them.
+        "apikey": key,
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Prefer": "return=representation",
+    }
+    if key.startswith("eyJ"):
+        headers["Authorization"] = "Bearer " + key
+
     request = urllib.request.Request(
         url=url,
         data=data,
         method=method,
-        headers={
-            "apikey": key,
-            "Authorization": "Bearer " + key,
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "Prefer": "return=representation",
-        },
+        headers=headers,
     )
     try:
         with urllib.request.urlopen(request, timeout=8) as response:
@@ -571,7 +577,7 @@ def _db_request(method: str, query: dict[str, str] | None = None, payload: dict[
         raise ServiceError(
             502,
             "provider_unavailable",
-            "Payment verification storage returned an error. Check the Supabase schema and service key.",
+            "Supabase rejected the request. Check SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, Data API access, and the table grants in database/schema.sql.",
         ) from exc
     except (urllib.error.URLError, TimeoutError, OSError) as exc:
         raise ServiceError(
