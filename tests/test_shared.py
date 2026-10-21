@@ -169,6 +169,16 @@ class BankCatalogTests(unittest.TestCase):
             self.assertEqual(profiles["hbl"]["sender_allowlist"], [])
             self.assertIsNone(profiles["hbl"]["amount_regex"])
 
+    def test_catalog_profiles_use_optional_note_without_source_metadata(self):
+        with patch.dict(os.environ, {}, clear=True):
+            profiles = _load_bank_profiles()
+        self.assertNotIn("source_urls", profiles["hbl"])
+        self.assertNotIn("official_references", profiles["hbl"])
+        self.assertIn("note", profiles["hbl"])
+        self.assertNotIn("research_note", profiles["hbl"])
+        self.assertNotIn("source_urls", profiles["nayapay"])
+        self.assertEqual(set(profiles["nayapay"]["sender_allowlist"]), {"service@nayapay.com"})
+
     def test_committed_nayapay_adapter_parses_label_value_template(self):
         with patch.dict(os.environ, {}, clear=True):
             profile = _load_bank_profiles()["nayapay"]
@@ -181,7 +191,7 @@ class BankCatalogTests(unittest.TestCase):
         self.assertEqual(amount, Decimal("1.00"))
         self.assertEqual(total, Decimal("1.00"))
 
-    def test_bank_directory_exposes_configuration_status(self):
+    def test_bank_directory_exposes_configuration_status_without_source_urls(self):
         with patch.dict(os.environ, {}, clear=True):
             directory = bank_directory()
         by_id = {item["id"]: item for item in directory}
@@ -190,6 +200,8 @@ class BankCatalogTests(unittest.TestCase):
         self.assertIn("hbl", by_id)
         self.assertFalse(by_id["hbl"]["configured"])
         self.assertEqual(by_id["hbl"]["status"], "needs_verified_email_sample")
+        self.assertNotIn("source_urls", by_id["hbl"])
+        self.assertIn("note", by_id["hbl"])
 
 
 if __name__ == "__main__":
