@@ -1,0 +1,2 @@
+# Pure-Python QR encoding; Pillow is not required for SVG output.
+qrcode==8.2
