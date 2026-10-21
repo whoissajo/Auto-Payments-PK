@@ -148,9 +148,9 @@ Do not interpret not_found as proof the customer did not pay. Alert delivery and
 
 ## QR generation and five-minute automatic verification
 
-The API provides both \`POST /api/generate\` and the requested misspelling \`POST /api/genrate\`; both routes behave the same. The route creates a PKR payment intent, renders a QR image, and gives it a five-minute deadline. A checkout should call \`GET /api/status?id=INTENT_UUID\` every few seconds using the returned \`X-Payment-Token\`. Each status request searches the configured mailbox for a trusted, unclaimed credit alert matching the exact amount and whose IMAP arrival time falls inside the intent's five-minute window.
+The API provides both `POST /api/generate` and the requested misspelling `POST /api/genrate`; both routes behave the same. The route creates a PKR payment intent, renders a QR image, and gives it a five-minute deadline. A checkout should call `GET /api/status?id=INTENT_UUID` every few seconds using the returned `X-Payment-Token`. Each status request searches the configured mailbox for a trusted, unclaimed credit alert matching the exact amount and whose IMAP arrival time falls inside the intent's five-minute window.
 
-When exactly one matching alert is found, the API claims the transaction using the existing one-time-claim protection and changes the intent status to \`verified\`. If no valid alert is found by expiry, the status becomes \`not_verified\`. Multiple matching alerts are treated as ambiguous; the API will not guess which transaction belongs to the order. To reduce ambiguity, the database allows only one pending intent per bank and amount.
+When exactly one matching alert is found, the API claims the transaction using the existing one-time-claim protection and changes the intent status to `verified`. If no valid alert is found by expiry, the status becomes `not_verified`. Multiple matching alerts are treated as ambiguous; the API will not guess which transaction belongs to the order. To reduce ambiguity, the database allows only one pending intent per bank and amount.
 
 ### Required configuration
 
@@ -158,28 +158,28 @@ In Vercel, add:
 
 | Variable | Purpose |
 | --- | --- |
-| \`PAYMENT_QR_PAYLOAD_TEMPLATE\` | The **actual dynamic payment URI/template provided by your bank or payment provider**. It must contain \`{amount}\` and may contain \`{reference}\`. These placeholders are URL-encoded before being substituted. There is no safe generic Pakistani-bank QR format to invent. |
-| \`SUPABASE_PUBLISHABLE_KEY\` | Supabase publishable key used by the checkout page to subscribe to realtime status broadcasts. Legacy \`SUPABASE_ANON_KEY\` is also accepted. This is a public/client key, never the service-role secret. |
-| \`PAYMENT_ALLOWED_ORIGINS\` | Optional comma-separated exact origins allowed to call \`GET /api/status\` from a browser, e.g. \`https://checkout.example.com\`. Leave unset if status checks are made server-to-server. |
+| `PAYMENT_QR_PAYLOAD_TEMPLATE` | The **actual dynamic payment URI/template provided by your bank or payment provider**. It must contain `{amount}` and may contain `{reference}`. These placeholders are URL-encoded before being substituted. There is no safe generic Pakistani-bank QR format to invent. |
+| `SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key used by the checkout page to subscribe to realtime status broadcasts. Legacy `SUPABASE_ANON_KEY` is also accepted. This is a public/client key, never the service-role secret. |
+| `PAYMENT_ALLOWED_ORIGINS` | Optional comma-separated exact origins allowed to call `GET /api/status` from a browser, e.g. `https://checkout.example.com`. Leave unset if status checks are made server-to-server. |
 
-\`SUPABASE_URL\`, \`SUPABASE_SERVICE_ROLE_KEY\`, \`API_SECRET_KEY\`, and the configured IMAP mailbox are also required. Do not use a static screenshot or invent a payment URI: set the template only to the dynamic URI format actually supported by your receiving bank/provider. If your provider supplies only a static QR image, this template-based endpoint cannot safely add a new amount to it.
+`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `API_SECRET_KEY`, and the configured IMAP mailbox are also required. Do not use a static screenshot or invent a payment URI: set the template only to the dynamic URI format actually supported by your receiving bank/provider. If your provider supplies only a static QR image, this template-based endpoint cannot safely add a new amount to it.
 
-Run the updated \`database/schema.sql\` in the Supabase SQL Editor. It creates the \`payment_intents\` table, restricts Data API access to \`service_role\`, and adds a status-change trigger that broadcasts to a per-intent Supabase Realtime channel. The broadcast uses a random 256-bit token as a capability topic and contains only status, amount, currency, intent ID, expiry, and verification time. The client should subscribe as soon as it receives the generate response, before showing the QR.
+Run the updated `database/schema.sql` in the Supabase SQL Editor. It creates the `payment_intents` table, restricts Data API access to `service_role`, and adds a status-change trigger that broadcasts to a per-intent Supabase Realtime channel. The broadcast uses a random 256-bit token as a capability topic and contains only status, amount, currency, intent ID, expiry, and verification time. The client should subscribe as soon as it receives the generate response, before showing the QR.
 
 ### Generate a QR
 
-Call this from a trusted merchant backend. **Never put \`API_SECRET_KEY\` in browser or mobile code.**
+Call this from a trusted merchant backend. **Never put `API_SECRET_KEY` in browser or mobile code.**
 
     curl -X POST "https://YOUR-DOMAIN/api/generate" \
       -H "Authorization: Bearer YOUR_API_SECRET_KEY" \
       -H "Content-Type: application/json" \
       -d '{"bank":"nayapay","amount":"150.00","merchant_reference":"ORDER-2026-000123"}'
 
-The response includes \`qr_code\` (an SVG data URL), \`intent_id\`, \`status_url\`, \`status_token\`, \`expires_at\`, and the Supabase Realtime connection details. Display \`qr_code\` as an image and keep the status token private to this payment checkout.
+The response includes `qr_code` (an SVG data URL), `intent_id`, `status_url`, `status_token`, `expires_at`, and the Supabase Realtime connection details. Display `qr_code` as an image and keep the status token private to this payment checkout.
 
 ### Listen for the WebSocket update and keep checking
 
-Install \`@supabase/supabase-js\` in your checkout frontend. The Realtime subscription delivers a \`PAYMENT_STATUS\` broadcast when the intent changes to \`verified\` or \`not_verified\`. Keep calling \`GET /api/status\` during checkout; that request is what checks the IMAP inbox. The WebSocket sends the resulting state change immediately to connected clients. The status endpoint remains the source of truth if the browser reconnects or a broadcast is missed.
+Install `@supabase/supabase-js` in your checkout frontend. The Realtime subscription delivers a `PAYMENT_STATUS` broadcast when the intent changes to `verified` or `not_verified`. Keep calling `GET /api/status` during checkout; that request is what checks the IMAP inbox. The WebSocket sends the resulting state change immediately to connected clients. The status endpoint remains the source of truth if the browser reconnects or a broadcast is missed.
 
     import { createClient } from "@supabase/supabase-js";
 
@@ -227,7 +227,7 @@ Install \`@supabase/supabase-js\` in your checkout frontend. The Realtime subscr
       }
     }
 
-If the checkout page is hosted on a different domain, add that exact origin to \`PAYMENT_ALLOWED_ORIGINS\`. Subscribe before starting the first status request. Do not treat the QR being scanned, the checkout browser saying success, or a WebSocket message alone as proof of payment; confirm the final \`verified\` status returned by the API.
+If the checkout page is hosted on a different domain, add that exact origin to `PAYMENT_ALLOWED_ORIGINS`. Subscribe before starting the first status request. Do not treat the QR being scanned, the checkout browser saying success, or a WebSocket message alone as proof of payment; confirm the final `verified` status returned by the API.
 
 **Runtime limitation:** this mailbox-based implementation checks while a checkout watcher is making status requests. If a customer closes the page, there is no five-minute Python process running in the background on Vercel Hobby; an always-on worker or external queue/worker would be needed for verification to continue independently of the checkout. Vercel Hobby cron jobs are daily-only, so a cron job is not a substitute for five-second polling.
 
