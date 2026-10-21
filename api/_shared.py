@@ -878,6 +878,7 @@ def find_recent_payment_by_amount(
     amount_expected: Decimal,
     created_at: datetime,
     expires_at: datetime,
+    merchant_reference: str,
 ) -> ParsedPayment | None:
     """Find one unclaimed credit alert for the exact amount during the intent window.
 
@@ -960,7 +961,11 @@ def find_recent_payment_by_amount(
                     continue
                 if found_total is not None and found_total != found_amount:
                     continue
-                if _find_claim(bank, transaction_id=txid):
+                existing_claim = _find_claim(bank, transaction_id=txid)
+                if existing_claim and (
+                    existing_claim.get("merchant_reference") != merchant_reference
+                    or Decimal(str(existing_claim.get("amount"))) != amount_expected
+                ):
                     continue
                 candidates[txid] = ParsedPayment(
                     transaction_id=txid,
