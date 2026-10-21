@@ -43,7 +43,7 @@ The service reads email notifications over IMAP. For the built-in adapter, confi
 2. Keep the project root at the repository root. No build command is required for the Python API.
 3. Create a Supabase project, then run the SQL file at database/schema.sql in its SQL Editor.
 4. In Vercel **Project → Settings → Environment Variables**, add the variables below. Set them for the Production environment and redeploy.
-5. Use a long random API_SECRET_KEY, a mailbox dedicated to payment alerts, and the Supabase service-role key. The service-role key must stay only in Vercel server-side environment variables.
+5. Use a long random API_SECRET_KEY, a mailbox dedicated to payment alerts, and set the Supabase server-side key in the exact environment variable `SUPABASE_SERVICE_ROLE_KEY`. It may contain the legacy JWT-style `service_role` key or a modern `sb_secret_...` secret key. Keep it only in Vercel server-side environment variables.
 6. After deployment, test https://YOUR-DOMAIN/api/health and https://YOUR-DOMAIN/api/banks. Use the verification endpoint only after sending a small test transfer and checking the notification parser against the actual bank email.
 
 ### Required environment variables
@@ -54,7 +54,7 @@ The service reads email notifications over IMAP. For the built-in adapter, confi
 | GMAIL_ADDRESS | Mailbox login that receives the transaction alert. |
 | GMAIL_APP_PASSWORD | Mailbox app password, not the ordinary email password. |
 | SUPABASE_URL | Project URL, for example https://project-ref.supabase.co. |
-| SUPABASE_SERVICE_ROLE_KEY | Server-only Supabase service-role key. Never expose it in browser code. |
+| SUPABASE_SERVICE_ROLE_KEY | Server-only privileged Supabase key: legacy JWT-style `service_role` or modern `sb_secret_...`. Never expose it in browser code. |
 
 ### Optional environment variables
 
@@ -117,6 +117,8 @@ Possible responses include:
 - 404 not_found — no matching trusted notification was found.
 - 409 duplicate_transaction — that transaction was already claimed for another order.
 - 409 amount_mismatch — a notification was found but its amount does not match.
+- 409 total_amount_mismatch — the notification's received amount and total amount disagree.
+- 409 order_already_paid — the order reference already belongs to a verified transaction.
 - 400 invalid_request — request fields are missing or invalid.
 - 401 unauthorized — API key is missing or incorrect.
 - 422 adapter_not_configured — the selected bank needs an adapter.
@@ -150,7 +152,7 @@ Do not blindly copy regexes from this example: email templates differ, and a loo
 - Never put bank credentials, email app passwords, API keys, or the Supabase service-role key in source code.
 - If a secret has ever been committed publicly, revoke/rotate it and remove it from Git history.
 - The database enforces unique transaction claims and unique merchant references. Keep the schema constraint in place.
-- Only the server uses the Supabase service-role key; do not put it in a client application.
+- Only the server uses `SUPABASE_SERVICE_ROLE_KEY`; do not put it in a client application. Legacy JWT-style keys are sent as a Bearer token; modern `sb_secret_...` keys are sent using the `apikey` header only.
 - Verification is based on incoming email evidence, not direct account access. Never ask customers for OTPs, PINs, internet-banking passwords, or app credentials.
 - Use official bank/PSP merchant onboarding and Raast P2M integration for legitimate commercial payment acceptance. Requirements vary by provider and business model.
 - This project does not handle refunds, chargebacks, reversals, account balance checks, or payment initiation.
