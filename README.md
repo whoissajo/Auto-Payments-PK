@@ -12,12 +12,13 @@ Auto-Payments-PK is designed to **verify an incoming transfer against a trusted 
 - Python serverless functions that deploy on Vercel.
 - An implemented NayaPay email-alert adapter based on the public example in the linked project.
 - Strict sender allowlisting, transaction-ID matching, exact two-decimal PKR comparison, and optional total-amount checks.
-- A configurable adapter format for additional bank and wallet notification templates.
+- A committed `BANK_ADAPTERS_JSON.json` catalogue of Pakistani commercial banks, digital banks, microfinance banks, EMIs, and wallet brands, with an explicit per-provider activation status.
+- A configurable adapter format for adding further bank and wallet notification templates.
 - API-key authentication for verification requests.
 - Supabase/Postgres-backed one-time payment claims to prevent a single transfer from being reused for different orders.
 - Public health and bank-directory endpoints, tests, a database schema, and an environment-variable template.
 
-**Important:** only NayaPay has a built-in notification parser. Other banks and wallets appear in the directory but remain marked as not configured until you supply and test their own trusted sender address and message patterns. A directory entry is not a claim that the bank has a public transaction API or a working adapter. Every bank's message format must be tested using genuine, redacted examples.
+**Important:** `BANK_ADAPTERS_JSON.json` is the committed bank/wallet catalogue and is bundled with the Vercel functions. It currently contains 54 profiles, but only NayaPay is enabled because the repository includes a working example for its alert email. Other profiles are present for discovery and transparency, but remain disabled until the exact sender address and transaction-email fields can be confirmed from a genuine, redacted message. SBP's general alert policy and a bank's public contact email do not prove the transaction-alert sender. Guessing them could incorrectly confirm a payment. Public sources are recorded in each profile's `source_urls` field.
 
 ## Architecture
 
@@ -64,9 +65,27 @@ The service reads email notifications over IMAP. For the built-in adapter, confi
 | IMAP_PORT | 993 | TLS IMAP port. |
 | IMAP_FOLDER | INBOX | Mail folder to search. |
 | IMAP_TIMEOUT_SECONDS | 8 | Socket timeout for the mailbox. |
-| BANK_ADAPTERS_JSON | unset | JSON object defining extra bank/wallet adapters. |
+| BANK_ADAPTERS_JSON | unset | Optional JSON object that overrides selected entries from `BANK_ADAPTERS_JSON.json` for private/test adapters. |
 
 Copy .env.example to a local .env for local testing. Never commit .env or real credentials. Vercel environment variable changes apply to new deployments, so redeploy after updates.
+
+## Bank catalogue and adding adapters
+
+The repository's `BANK_ADAPTERS_JSON.json` file is the source-controlled catalogue. It includes bank and wallet names, institution type, official source links, current activation state, and notes on what remains to be verified. Vercel is configured to bundle this file with both `/api/banks` and `/api/verify`; you do not need to paste the entire catalogue into a Vercel environment variable.
+
+The `GET /api/banks` response tells you which entries are configured. At this point, only NayaPay is enabled. A bank listed with `status: "needs_verified_email_sample"` is not an active integration.
+
+To activate a bank or wallet:
+
+1. Make a small test credit to the receiving account and save the original alert email in a private location. Redact account numbers, names, balances, links, and other personal information before sharing a test fixture.
+2. Confirm the exact `From` email address from multiple genuine alerts and add only that exact address to `sender_allowlist`. Do not use a broad domain wildcard or a public customer-support email.
+3. Write transaction-ID and amount regexes against that institution's actual email body. Check that the amount regex cannot accidentally capture the balance, fee, or a later total field.
+4. Add a synthetic test fixture and test for valid transactions, missing fields, amount mismatches, malformed values, and similar labels in the same email.
+5. Only then set `enabled` to `true` and `status` to `configured`. Deploy and compare a test transfer against the bank's official statement.
+
+Use `BANK_ADAPTERS_JSON` only if you need an environment-specific override. It must be a JSON object keyed by adapter slug. Environment entries replace the same slug from the file; they do not need to repeat all other catalogue entries. Never put credentials in the JSON file or in a client-side environment variable.
+
+Research references in the catalogue include the [SBP digital-transaction-alert circular](https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022), [SBP's commercial-bank directory](https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks), [SBP's microfinance-bank directory](https://www.sbp.org.pk/sbp-regulated-institutions/microfinance-banks), and the [authorized EMI list](https://www.sbp.org.pk/ps/PDF/List-of-EMIs.pdf). These sources identify institutions or the general alert policy; they do not disclose all transaction-email senders and message layouts.
 
 ## API
 
