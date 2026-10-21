@@ -79,19 +79,25 @@ security definer
 set search_path = ''
 as $$
 begin
-    perform realtime.send(
-        jsonb_build_object(
-            'intent_id', new.id::text,
-            'status', new.status,
-            'amount', new.amount::text,
-            'currency', new.currency,
-            'expires_at', new.expires_at,
-            'verified_at', new.verified_at
-        ),
-        'PAYMENT_STATUS',
-        'payment-intent:' || new.status_token,
-        false
-    );
+    begin
+        perform realtime.send(
+            jsonb_build_object(
+                'intent_id', new.id::text,
+                'status', new.status,
+                'amount', new.amount::text,
+                'currency', new.currency,
+                'expires_at', new.expires_at,
+                'verified_at', new.verified_at
+            ),
+            'PAYMENT_STATUS',
+            'payment-intent:' || new.status_token,
+            false
+        );
+    exception when others then
+        -- Realtime should not prevent the durable payment status update. The
+        -- checkout can still recover the result from GET /api/status.
+        raise warning 'Realtime broadcast failed for payment intent status update; status remains saved.';
+    end;
     return new;
 end;
 $$;
