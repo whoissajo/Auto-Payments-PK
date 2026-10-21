@@ -10,9 +10,10 @@ class handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         try:
+            banks = bank_directory()
             write_json(self, 200, {
-                "banks": bank_directory(),
-                "count": len(bank_directory()),
+                "banks": banks,
+                "count": len(banks),
                 "note": "configured means an adapter is present, not that the provider has an official API integration",
             })
         except ServiceError as exc:
