@@ -1,8 +1,10 @@
+import base64
 import os
 import unittest
 from decimal import Decimal
 from unittest.mock import Mock, patch
 
+from api.generate import build_qr_payload, qr_svg_data_url
 from api._shared import (
     NAYAPAY_ADAPTER,
     ServiceError,
@@ -13,7 +15,62 @@ from api._shared import (
     _db_request,
     _load_bank_profiles,
     bank_directory,
+    create_payment_intent,
 )
+
+
+class PaymentQRTests(unittest.TestCase):
+    def test_builds_dynamic_uri_with_encoded_amount_and_reference(self):
+        payload = build_qr_payload(
+            "pay://merchant?amount={amount}&reference={reference}",
+            Decimal("12.50"),
+            "ORDER:AB 123",
+        )
+        self.assertEqual(
+            payload,
+            "pay://merchant?amount=12.50&reference=ORDER%3AAB%20123",
+        )
+
+    def test_rejects_template_without_amount_placeholder(self):
+        with self.assertRaises(ServiceError) as error:
+            build_qr_payload("pay://merchant?account=123", Decimal("12.50"), "ORDER-123")
+        self.assertEqual(error.exception.code, "qr_not_configured")
+
+    def test_qr_encoder_returns_svg_data_url(self):
+        result = qr_svg_data_url("pay://merchant?amount=1.00&reference=TEST-123")
+        self.assertTrue(result.startswith("data:image/svg+xml;base64,"))
+        svg = base64.b64decode(result.split(",", 1)[1]).decode("utf-8")
+        self.assertIn("<svg", svg)
+        self.assertIn("<path", svg)
+        self.assertIn("</svg>", svg)
+
+    def test_intent_creation_sets_five_minute_expiry_and_random_token(self):
+        from datetime import datetime
+
+        def fake_db_request(method, query=None, payload=None, table="verified_payments"):
+            self.assertEqual(method, "POST")
+            self.assertEqual(table, "payment_intents")
+            created = datetime.fromisoformat(payload["created_at"].replace("Z", "+00:00"))
+            expires = datetime.fromisoformat(payload["expires_at"].replace("Z", "+00:00"))
+            self.assertEqual((expires - created).total_seconds(), 300)
+            self.assertEqual(payload["status"], "pending")
+            self.assertEqual(payload["amount"], "125.00")
+            self.assertEqual(len(payload["status_token"]), 64)
+            return 201, [{
+                "id": "11111111-1111-4111-8111-111111111111",
+                **payload,
+            }]
+
+        with patch("api._shared._db_request", side_effect=fake_db_request):
+            intent = create_payment_intent(
+                "nayapay",
+                Decimal("125.00"),
+                "ORDER-123",
+                "pay://merchant?amount=125.00",
+            )
+        self.assertEqual(intent["status"], "pending")
+        self.assertEqual(intent["qr_payload"], "pay://merchant?amount=125.00")
+        self.assertEqual(len(intent["status_token"]), 64)
 
 
 class AmountParsingTests(unittest.TestCase):
