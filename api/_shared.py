@@ -397,7 +397,7 @@ def decode_message_bodies(message: email.message.Message) -> list[str]:
     return plain + rich
 
 
-def _require_mail_env() -> tuple[str, str, str, int, int]:
+def _require_mail_env() -> tuple[str, str, str, int, int, str]:
     username = os.environ.get("GMAIL_ADDRESS", "").strip()
     password = os.environ.get("GMAIL_APP_PASSWORD", "").strip()
     host = os.environ.get("IMAP_HOST", "imap.gmail.com").strip()
