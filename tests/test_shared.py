@@ -137,9 +137,9 @@ class SupabaseKeyCompatibilityTests(unittest.TestCase):
 class NarrowNayaPayAmountParsingTests(unittest.TestCase):
     def test_missing_amount_does_not_fall_through_to_total_amount(self):
         message = (
-            "Transaction ID: SADAPKKA202609241090215740392466\\n"
-            "Amount Received\\n"
-            "Total Amount\\n"
+            "Transaction ID: SADAPKKA202609241090215740392466\n"
+            "Amount Received\n"
+            "Total Amount\n"
             "Rs. 1.00"
         )
         txid, amount, total = parse_email_fields(message, NAYAPAY_ADAPTER)
