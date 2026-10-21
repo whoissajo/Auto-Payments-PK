@@ -45,7 +45,7 @@ Use exactly these profile fields:
 }
 
 Rules:
-1. institution_type must be one of: commercial_bank, islamic_bank, foreign_bank, digital_bank, specialized_bank, microfinance_bank, emi, wallet. Choose based on the institution name/context; do not invent a legal classification. If uncertain, use "bank".
+1. institution_type must be one of: commercial_bank, islamic_bank, foreign_bank, digital_bank, specialized_bank, microfinance_bank, emi, wallet, bank. Choose based on the institution name/context; do not invent a legal classification. If uncertain, use "bank".
 2. sender_allowlist must contain only the exact full email address found in the provider's From header, normalized to lowercase. Never guess an address, allow a whole domain, use a display name alone, or include the user's mailbox address. If the real provider sender cannot be established from the sample, leave it [].
 3. transaction_id_regex must match the transaction/reference ID from the email body and have a capture group for only that ID. Match the field label and surrounding punctuation as narrowly as the sample allows. Do not capture generic message IDs or unrelated reference numbers.
 4. amount_regex must match the amount actually credited/received for this transaction, with a capture group for the numeric amount only (digits, optional commas, and at most two decimal places). It must not match an account balance, available balance, fee, tax, or total amount. Support the currency label/punctuation seen in the sample, such as PKR or Rs., without assuming unseen formats.
