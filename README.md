@@ -167,7 +167,7 @@ Example (replace the sample sender and patterns with values verified against tha
       }
     }
 
-Set the JSON as a single-line environment variable in Vercel. Escape backslashes as required by JSON. The service only accepts messages from the exact allowlisted sender addresses. Do not use a broad domain wildcard. If a provider changes its template, update the regexes and rerun tests before deploying.
+For a private or environment-specific override, set this JSON as a single-line `BANK_ADAPTERS_JSON` environment variable in Vercel. For the shared catalogue, edit `BANK_ADAPTERS_JSON.json` as described above. Escape backslashes as required by JSON. The service only accepts messages from the exact allowlisted sender addresses. Do not use a broad domain wildcard. If a provider changes its template, update the regexes and rerun tests before deploying.
 
 Do not blindly copy regexes from this example: email templates differ, and a loose amount pattern can accidentally match a balance or fee. If the bank does not send an email with a stable transaction identifier and an unambiguous amount, use an official API/webhook or do not mark it automated.
 
