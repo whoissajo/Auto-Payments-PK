@@ -73,7 +73,7 @@ Copy .env.example to a local .env for local testing. Never commit .env or real c
 
 The repository's `BANK_ADAPTERS_JSON.json` file is the source-controlled catalogue. Each profile includes a display name, institution type, activation state, exact sender allowlist, parsing regexes, and an optional `note`. Source URLs are not part of the profile schema. Vercel is configured to bundle this file with both `/api/banks` and `/api/verify`; you do not need to paste the entire catalogue into a Vercel environment variable. To prepare a new profile from a real notification, follow [BANK_ADAPTERS_GUIDE.md](BANK_ADAPTERS_GUIDE.md).
 
-The `GET /api/banks` response tells you which entries are configured. At this point, only NayaPay is enabled. A bank listed with `status: "needs_verified_email_sample"` is not an active integration.
+The `GET /api/banks` response tells you which entries are configured. At this point, only NayaPay is enabled. A bank listed with `status: "needs_verified_email_sample"` is not an active integration. The public response omits `source_urls` entirely and includes `note` only when it contains non-empty text.
 
 To activate a bank or wallet:
 
