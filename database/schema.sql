@@ -26,3 +26,10 @@ alter table public.verified_payments enable row level security;
 
 -- Intentionally create no anon/authenticated policies. The server's
 -- service-role key bypasses RLS. Never expose that key to a client.
+
+-- Explicit least-privilege Data API grants. Supabase projects created under the
+-- newer opt-in exposure defaults do not automatically grant table permissions.
+-- Only the server's privileged role may read or insert verified payment claims.
+revoke all on table public.verified_payments from public, anon, authenticated;
+grant usage on schema public to service_role;
+grant select, insert on table public.verified_payments to service_role;
