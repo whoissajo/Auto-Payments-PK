@@ -1,9 +1,885 @@
 {
+  "albaraka": {
+    "name": "Al Baraka Bank (Pakistan) Limited",
+    "institution_type": "commercial_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "allied-bank": {
+    "name": "Allied Bank Limited",
+    "institution_type": "commercial_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "askari-bank": {
+    "name": "Askari Bank Limited",
+    "institution_type": "commercial_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "bank-alfalah": {
+    "name": "Bank Alfalah Limited",
+    "institution_type": "commercial_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://bankalfalah.com/premier/sms-alert/",
+      "https://www.bankalfalah.com/wp-content/themes/alfalah-theme/pdf/faq-for-sms-alerts-01jul16.pdf"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses. The bank documents SMS alerts and shortcode 8287; that SMS shortcode is not an email sender address and cannot be used by this IMAP-only API."
+  },
+  "bank-al-habib": {
+    "name": "Bank AL Habib Limited",
+    "institution_type": "commercial_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "bank-islamic": {
+    "name": "BankIslami Pakistan Limited",
+    "institution_type": "islamic_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "bank-of-china": {
+    "name": "Bank of China Limited — Pakistan operations",
+    "institution_type": "foreign_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "bank-of-khyber": {
+    "name": "The Bank of Khyber",
+    "institution_type": "commercial_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "bank-of-punjab": {
+    "name": "The Bank of Punjab",
+    "institution_type": "commercial_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "bank-makramah": {
+    "name": "Bank Makramah Limited (formerly Summit Bank)",
+    "institution_type": "commercial_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "citibank": {
+    "name": "Citibank N.A. — Pakistan operations",
+    "institution_type": "foreign_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "deutsche-bank": {
+    "name": "Deutsche Bank AG — Pakistan operations",
+    "institution_type": "foreign_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "dubai-islamic": {
+    "name": "Dubai Islamic Bank Pakistan Limited",
+    "institution_type": "islamic_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "easypaisa": {
+    "name": "Easypaisa Digital Bank Limited",
+    "institution_type": "digital_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/f_links/f-links.asp"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "exim-bank": {
+    "name": "EXIM Bank of Pakistan Limited",
+    "institution_type": "specialized_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "faysal-bank": {
+    "name": "Faysal Bank Limited",
+    "institution_type": "islamic_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "first-women-bank": {
+    "name": "First Women Bank Limited",
+    "institution_type": "commercial_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "hbl": {
+    "name": "Habib Bank Limited",
+    "institution_type": "commercial_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "habib-metro": {
+    "name": "Habib Metropolitan Bank Limited",
+    "institution_type": "commercial_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "icbc-pakistan": {
+    "name": "Industrial and Commercial Bank of China Limited — Pakistan operations",
+    "institution_type": "foreign_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "js-bank": {
+    "name": "JS Bank Limited",
+    "institution_type": "commercial_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "mashreq-bank": {
+    "name": "Mashreq Bank Pakistan Limited",
+    "institution_type": "digital_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/f_links/f-links.asp"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "mcb": {
+    "name": "MCB Bank Limited",
+    "institution_type": "commercial_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "mcb-islamic": {
+    "name": "MCB Islamic Bank Limited",
+    "institution_type": "islamic_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "meezan-bank": {
+    "name": "Meezan Bank Limited",
+    "institution_type": "islamic_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.meezanbank.com/ways-to-bank/"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses. Meezan documents SMS credit/debit alerts; it does not publicly document an email sender/template in the cited page."
+  },
+  "national-bank": {
+    "name": "National Bank of Pakistan",
+    "institution_type": "commercial_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "nbp": {
+    "name": "National Bank of Pakistan (legacy alias)",
+    "institution_type": "alias",
+    "enabled": false,
+    "status": "alias",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Compatibility alias; use national-bank as the canonical ID.",
+    "alias_for": "national-bank"
+  },
+  "ppcbl": {
+    "name": "Punjab Provincial Cooperative Bank Limited",
+    "institution_type": "specialized_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "raqami-digital-bank": {
+    "name": "Raqami Islamic Digital Bank Limited",
+    "institution_type": "digital_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/f_links/f-links.asp"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "samba-bank": {
+    "name": "Samba Bank Limited",
+    "institution_type": "commercial_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "sindh-bank": {
+    "name": "Sindh Bank Limited",
+    "institution_type": "commercial_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "soneri-bank": {
+    "name": "Soneri Bank Limited",
+    "institution_type": "commercial_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "standard-chartered": {
+    "name": "Standard Chartered Bank (Pakistan) Limited",
+    "institution_type": "foreign_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "ubl": {
+    "name": "United Bank Limited",
+    "institution_type": "commercial_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "ztbl": {
+    "name": "Zarai Taraqiati Bank Limited",
+    "institution_type": "specialized_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "apna-microfinance": {
+    "name": "APNA Microfinance Bank Limited",
+    "institution_type": "microfinance_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/microfinance-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "hbl-microfinance": {
+    "name": "HBL Microfinance Bank Limited",
+    "institution_type": "microfinance_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/microfinance-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "nrsp-microfinance": {
+    "name": "NRSP Microfinance Bank Limited",
+    "institution_type": "microfinance_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/microfinance-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "khushhali-microfinance": {
+    "name": "Khushhali Microfinance Bank Limited",
+    "institution_type": "microfinance_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/microfinance-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "lolc-microfinance": {
+    "name": "LOLC Microfinance Bank Limited",
+    "institution_type": "microfinance_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/microfinance-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "u-microfinance": {
+    "name": "U Microfinance Bank Limited",
+    "institution_type": "microfinance_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/microfinance-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "mobilink-bank": {
+    "name": "Mobilink Microfinance Bank Limited (JazzCash)",
+    "institution_type": "microfinance_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/microfinance-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "halan-microfinance": {
+    "name": "Halan Microfinance Bank Limited",
+    "institution_type": "microfinance_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/microfinance-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "sindh-microfinance": {
+    "name": "Sindh Microfinance Bank Limited",
+    "institution_type": "microfinance_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/microfinance-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "abhi-microfinance": {
+    "name": "ABHI Microfinance Bank Limited (formerly FINCA)",
+    "institution_type": "microfinance_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/microfinance-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "asa-microfinance": {
+    "name": "ASA Microfinance Bank (Pakistan) Limited",
+    "institution_type": "microfinance_bank",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_and_sms_policy; exact email format not verified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/microfinance-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
   "nayapay": {
     "name": "NayaPay",
-    "sender_allowlist": ["service@nayapay.com"],
-    "transaction_id_regex": "(?:Transaction ID|Reference No)\\s*[:#-]?\\s*([A-Z0-9-]{8,40})",
-    "amount_regex": "(?:Amount Credited|Transaction Amount)\\s*[:#-]?\\s*(?:PKR|Rs\\.? )?([0-9,]+(?:\\.[0-9]{1,2})?)",
-    "total_amount_regex": "(?:Total Amount)\\s*[:#-]?\\s*(?:PKR|Rs\\.? )?([0-9,]+(?:\\.[0-9]{1,2})?)"
+    "institution_type": "emi",
+    "enabled": true,
+    "status": "configured",
+    "alert_channel": "email",
+    "sender_allowlist": [
+      "service@nayapay.com"
+    ],
+    "transaction_id_regex": "(?:Transaction\\\\s+ID\\\\s*[:#-]?\\\\s*)([A-Z0-9]{10,})",
+    "amount_regex": "Amount\\\\s+Received\\\\s*(?:[:\\\\-]\\\\s*)?(?:Rs\\\\.?|PKR)\\\\s*([\\\\d,]+(?:\\\\.\\\\d{1,2})?)",
+    "total_amount_regex": "Total\\\\s+Amount\\\\s*(?:[:\\\\-]\\\\s*)?(?:Rs\\\\.?|PKR)\\\\s*([\\\\d,]+(?:\\\\.\\\\d{1,2})?)",
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://nayapay.com/"
+    ],
+    "research_note": "Sender and field labels match the user-provided working IMAP example. Confirm the current sender and HTML/text message layout using a fresh redacted email after rotating exposed credentials."
+  },
+  "sadapay": {
+    "name": "SadaPay",
+    "institution_type": "emi",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_or_official_webhook_unverified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/ps/PDF/List-of-EMIs.pdf"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "opay": {
+    "name": "OPay (Finja Private Limited)",
+    "institution_type": "emi",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_or_official_webhook_unverified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/ps/PDF/List-of-EMIs.pdf"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "akhtar-fuiou": {
+    "name": "Akhtar Fuiou Technologies (Private) Limited",
+    "institution_type": "emi",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_or_official_webhook_unverified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/ps/PDF/List-of-EMIs.pdf"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "e-processing-systems": {
+    "name": "E-Processing Systems (Private) Limited",
+    "institution_type": "emi",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_or_official_webhook_unverified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/ps/PDF/List-of-EMIs.pdf"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "wemsol": {
+    "name": "Wemsol Private Limited",
+    "institution_type": "emi",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_or_official_webhook_unverified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/ps/PDF/List-of-EMIs.pdf"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "jazzcash": {
+    "name": "JazzCash wallet",
+    "institution_type": "wallet",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_or_official_webhook_unverified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/microfinance-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "zindigi": {
+    "name": "Zindigi (JS Bank digital banking service)",
+    "institution_type": "wallet",
+    "enabled": false,
+    "status": "needs_verified_email_sample",
+    "alert_channel": "email_or_official_webhook_unverified",
+    "sender_allowlist": [],
+    "transaction_id_regex": null,
+    "amount_regex": null,
+    "total_amount_regex": null,
+    "source_urls": [
+      "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks"
+    ],
+    "research_note": "Official listing or alert information identifies the institution/channel, but does not establish an authenticated email sender or an exact transaction-email template. Leave disabled until a genuine redacted credit notification is supplied and regex-tested. Never enable with guessed sender addresses."
+  },
+  "_meta": {
+    "schema_version": 1,
+    "generated_at": "2026-10-21",
+    "integration_mode": "email_imap",
+    "configured_profiles": 1,
+    "total_profiles": 54,
+    "note": "Do not set enabled=true for a bank until its exact trusted sender address and message patterns have been confirmed from a real, redacted transaction-credit email and covered by tests. SBP's general alert policy does not prove an institution-specific email sender or layout.",
+    "official_references": {
+      "sbp_transaction_alert_policy": "https://www.sbp.org.pk/circulars/pspod-circular-letter-no-01-of-2022",
+      "sbp_commercial_banks": "https://www.sbp.org.pk/sbp-regulated-institutions/commercial-banks",
+      "sbp_microfinance_banks": "https://www.sbp.org.pk/sbp-regulated-institutions/microfinance-banks",
+      "sbp_authorized_emis": "https://www.sbp.org.pk/ps/PDF/List-of-EMIs.pdf",
+      "sbp_raast_p2m": "https://www.sbp.org.pk/our-subsidiaries/raast/raast-person-to-merchant"
+    }
   }
 }
