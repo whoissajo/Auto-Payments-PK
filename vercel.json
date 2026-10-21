@@ -2,7 +2,12 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
     "api/verify.py": {
-      "maxDuration": 30
+      "maxDuration": 30,
+      "includeFiles": "BANK_ADAPTERS_JSON.json"
+    },
+    "api/banks.py": {
+      "maxDuration": 10,
+      "includeFiles": "BANK_ADAPTERS_JSON.json"
     }
   }
 }
