@@ -8,13 +8,14 @@ import imaplib
 import json
 import os
 import re
+import secrets
 import ssl
 import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from email import policy
 from email.parser import BytesParser
@@ -117,7 +118,12 @@ class TextOnlyHTML(HTMLParser):
         return "\n".join(self.parts)
 
 
-def write_json(handler: Any, status: int, payload: dict[str, Any]) -> None:
+def write_json(
+    handler: Any,
+    status: int,
+    payload: dict[str, Any],
+    extra_headers: dict[str, str] | None = None,
+) -> None:
     body = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
     handler.send_response(status)
     handler.send_header("Content-Type", "application/json; charset=utf-8")
@@ -126,6 +132,8 @@ def write_json(handler: Any, status: int, payload: dict[str, Any]) -> None:
     handler.send_header("X-Content-Type-Options", "nosniff")
     handler.send_header("Referrer-Policy", "no-referrer")
     handler.send_header("X-Frame-Options", "DENY")
+    for name, value in (extra_headers or {}).items():
+        handler.send_header(name, value)
     handler.end_headers()
     handler.wfile.write(body)
 
@@ -628,9 +636,16 @@ def _supabase_config() -> tuple[str, str]:
     return url, key
 
 
-def _db_request(method: str, query: dict[str, str] | None = None, payload: dict[str, Any] | None = None) -> tuple[int, Any]:
+def _db_request(
+    method: str,
+    query: dict[str, str] | None = None,
+    payload: dict[str, Any] | None = None,
+    table: str = "verified_payments",
+) -> tuple[int, Any]:
+    if table not in {"verified_payments", "payment_intents"}:
+        raise ServiceError(500, "internal_error", "Invalid internal database table.")
     base_url, key = _supabase_config()
-    url = base_url + "/rest/v1/verified_payments"
+    url = base_url + "/rest/v1/" + table
     if query:
         url += "?" + urllib.parse.urlencode(query)
     data = None if payload is None else json.dumps(payload, separators=(",", ":")).encode("utf-8")
@@ -770,3 +785,210 @@ def claim_payment(bank: str, payment: ParsedPayment, expected: Decimal, merchant
         )
 
     raise ServiceError(502, "provider_unavailable", "Could not safely claim the verified payment.")
+
+
+def parse_utc_datetime(value: str | datetime) -> datetime:
+    """Parse a database timestamp and normalize it to UTC."""
+    if isinstance(value, datetime):
+        parsed = value
+    else:
+        parsed = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+def create_payment_intent(
+    bank: str,
+    amount: Decimal,
+    merchant_reference: str,
+    qr_payload: str,
+) -> dict[str, Any]:
+    """Create a five-minute pending intent with an unguessable watcher token."""
+    created_at = datetime.now(timezone.utc)
+    expires_at = created_at + timedelta(minutes=5)
+    status_token = secrets.token_hex(32)
+    row = {
+        "bank": bank,
+        "merchant_reference": merchant_reference,
+        "amount": f"{amount:.2f}",
+        "currency": "PKR",
+        "status": "pending",
+        "status_token": status_token,
+        "created_at": created_at.isoformat(),
+        "expires_at": expires_at.isoformat(),
+        "last_checked_at": None,
+    }
+    # qr_payload is intentionally not stored: only the generated QR is returned.
+    status, data = _db_request("POST", payload=row, table="payment_intents")
+    if status == 409:
+        raise ServiceError(
+            409,
+            "payment_intent_conflict",
+            "This order reference already exists or another pending payment for this bank and amount is active.",
+        )
+    if status != 201 or not isinstance(data, list) or not data:
+        raise ServiceError(502, "provider_unavailable", "Could not create the payment intent.")
+    created = data[0]
+    created["status_token"] = status_token
+    created["qr_payload"] = qr_payload
+    return created
+
+
+def get_payment_intent(intent_id: str, status_token: str) -> dict[str, Any] | None:
+    status, data = _db_request(
+        "GET",
+        query={
+            "select": "id,bank,merchant_reference,amount,currency,status,status_token,created_at,expires_at,last_checked_at,verified_at,transaction_id",
+            "id": "eq." + intent_id,
+            "status_token": "eq." + status_token,
+            "limit": "1",
+        },
+        table="payment_intents",
+    )
+    if status != 200 or not isinstance(data, list):
+        raise ServiceError(502, "provider_unavailable", "Could not read the payment intent.")
+    return data[0] if data else None
+
+
+def update_payment_intent(
+    intent_id: str,
+    status_token: str,
+    changes: dict[str, Any],
+) -> dict[str, Any] | None:
+    """Atomically update only a still-pending intent."""
+    status, data = _db_request(
+        "PATCH",
+        query={
+            "id": "eq." + intent_id,
+            "status_token": "eq." + status_token,
+            "status": "eq.pending",
+            "select": "id,bank,merchant_reference,amount,currency,status,status_token,created_at,expires_at,last_checked_at,verified_at,transaction_id",
+        },
+        payload=changes,
+        table="payment_intents",
+    )
+    if status != 200 or not isinstance(data, list):
+        raise ServiceError(502, "provider_unavailable", "Could not update the payment intent.")
+    return data[0] if data else None
+
+
+def find_recent_payment_by_amount(
+    bank: str,
+    amount_expected: Decimal,
+    created_at: datetime,
+    expires_at: datetime,
+) -> ParsedPayment | None:
+    """Find one unclaimed credit alert for the exact amount during the intent window.
+
+    A candidate must come from an exact allowlisted sender, have the configured
+    transaction/amount fields, and have an IMAP INTERNALDATE within the five-minute
+    window. Multiple candidates are treated as ambiguous and never auto-verified.
+    """
+    adapters = load_adapters()
+    adapter = adapters.get(bank)
+    if adapter is None:
+        raise ServiceError(
+            422,
+            "adapter_not_configured",
+            "This bank has no configured, tested notification adapter yet.",
+        )
+
+    created_at = parse_utc_datetime(created_at)
+    expires_at = parse_utc_datetime(expires_at)
+    username, password, host, port, timeout, folder = _require_mail_env()
+    imap = None
+    try:
+        imap = imaplib.IMAP4_SSL(host, port, timeout=timeout, ssl_context=ssl.create_default_context())
+        imap.login(username, password)
+        status, _ = imap.select(folder, readonly=True)
+        if status != "OK":
+            raise ServiceError(502, "provider_unavailable", "Could not open the configured alert mailbox.")
+
+        uids: set[bytes] = set()
+        # Search from the prior UTC day to avoid timezone/date-boundary misses;
+        # exact eligibility is decided below using INTERNALDATE.
+        since_date = (created_at.date() - timedelta(days=1)).strftime("%d-%b-%Y")
+        for sender in adapter["sender_allowlist"]:
+            status, data = imap.uid(
+                "SEARCH", None, "FROM", f'"{sender}"', "SINCE", since_date
+            )
+            if status == "OK" and data and data[0]:
+                uids.update(data[0].split())
+
+        candidates: dict[str, ParsedPayment] = {}
+        for uid in sorted(uids, key=lambda item: int(item))[-100:]:
+            status, data = imap.uid("FETCH", uid, "(INTERNALDATE BODY.PEEK[])")
+            if status != "OK" or not data:
+                continue
+
+            metadata = b" ".join(
+                item[0] for item in data
+                if isinstance(item, tuple) and item and isinstance(item[0], bytes)
+            )
+            date_match = re.search(rb'INTERNALDATE "([^"]+)"', metadata, re.IGNORECASE)
+            if not date_match:
+                continue
+            try:
+                received_at = datetime.strptime(
+                    date_match.group(1).decode("ascii"),
+                    "%d-%b-%Y %H:%M:%S %z",
+                ).astimezone(timezone.utc)
+            except (UnicodeDecodeError, ValueError):
+                continue
+            if received_at < created_at or received_at > expires_at:
+                continue
+
+            raw_email = next(
+                (
+                    item[1] for item in data
+                    if isinstance(item, tuple) and len(item) > 1 and isinstance(item[1], bytes)
+                ),
+                None,
+            )
+            if not raw_email:
+                continue
+
+            message = BytesParser(policy=policy.default).parsebytes(raw_email)
+            sender = parseaddr(message.get("From", ""))[1].strip().lower()
+            if sender not in adapter["sender_allowlist"]:
+                continue
+
+            for body in decode_message_bodies(message):
+                txid, found_amount, found_total = parse_email_fields(body, adapter)
+                if not txid or found_amount != amount_expected:
+                    continue
+                if found_total is not None and found_total != found_amount:
+                    continue
+                if _find_claim(bank, transaction_id=txid):
+                    continue
+                candidates[txid] = ParsedPayment(
+                    transaction_id=txid,
+                    amount=found_amount,
+                    total_amount=found_total,
+                    sender=sender,
+                    message_id=(message.get("Message-ID", "") or "").strip()[:255],
+                )
+
+        if len(candidates) == 1:
+            return next(iter(candidates.values()))
+        # Never choose between multiple same-amount credits based on guesswork.
+        return None
+    except ServiceError:
+        raise
+    except (imaplib.IMAP4.error, OSError, ssl.SSLError, TimeoutError) as exc:
+        raise ServiceError(
+            502,
+            "provider_unavailable",
+            "Could not securely read the configured alert mailbox.",
+        ) from exc
+    finally:
+        if imap is not None:
+            try:
+                imap.close()
+            except Exception:
+                pass
+            try:
+                imap.logout()
+            except Exception:
+                pass
