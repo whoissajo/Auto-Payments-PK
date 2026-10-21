@@ -1,7 +1,7 @@
 import os
 import unittest
 from decimal import Decimal
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from api._shared import (
     NAYAPAY_ADAPTER,
@@ -10,6 +10,7 @@ from api._shared import (
     parse_money,
     validate_identifier,
     load_adapters,
+    _db_request,
 )
 
 
@@ -96,6 +97,55 @@ class InputValidationTests(unittest.TestCase):
     def test_default_nayapay_adapter_is_loaded(self):
         with patch.dict(os.environ, {}, clear=True):
             self.assertIn("nayapay", load_adapters())
+
+
+class SupabaseKeyCompatibilityTests(unittest.TestCase):
+    def _mock_response(self):
+        response = Mock()
+        response.status = 200
+        response.read.return_value = b"[]"
+        response.__enter__ = Mock(return_value=response)
+        response.__exit__ = Mock(return_value=False)
+        return response
+
+    def test_modern_secret_key_is_not_sent_as_bearer_jwt(self):
+        with patch.dict(os.environ, {
+            "SUPABASE_URL": "https://example.supabase.co",
+            "SUPABASE_SERVICE_ROLE_KEY": "sb_secret_test_key",
+        }):
+            with patch("api._shared.urllib.request.urlopen", return_value=self._mock_response()) as urlopen:
+                status, data = _db_request("GET")
+                request = urlopen.call_args.args[0]
+                self.assertEqual(status, 200)
+                self.assertEqual(data, [])
+                self.assertEqual(request.get_header("Apikey"), "sb_secret_test_key")
+                self.assertIsNone(request.get_header("Authorization"))
+
+    def test_legacy_service_role_jwt_is_sent_as_bearer(self):
+        legacy_key = "eyJ.test.legacy-service-role"
+        with patch.dict(os.environ, {
+            "SUPABASE_URL": "https://example.supabase.co",
+            "SUPABASE_SERVICE_ROLE_KEY": legacy_key,
+        }):
+            with patch("api._shared.urllib.request.urlopen", return_value=self._mock_response()) as urlopen:
+                _db_request("GET")
+                request = urlopen.call_args.args[0]
+                self.assertEqual(request.get_header("Apikey"), legacy_key)
+                self.assertEqual(request.get_header("Authorization"), "Bearer " + legacy_key)
+
+
+class NarrowNayaPayAmountParsingTests(unittest.TestCase):
+    def test_missing_amount_does_not_fall_through_to_total_amount(self):
+        message = (
+            "Transaction ID: SADAPKKA202609241090215740392466\\n"
+            "Amount Received\\n"
+            "Total Amount\\n"
+            "Rs. 1.00"
+        )
+        txid, amount, total = parse_email_fields(message, NAYAPAY_ADAPTER)
+        self.assertEqual(txid, "SADAPKKA202609241090215740392466")
+        self.assertIsNone(amount)
+        self.assertEqual(total, Decimal("1.00"))
 
 
 if __name__ == "__main__":
