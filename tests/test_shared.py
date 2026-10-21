@@ -11,6 +11,8 @@ from api._shared import (
     validate_identifier,
     load_adapters,
     _db_request,
+    _load_bank_profiles,
+    bank_directory,
 )
 
 
@@ -146,6 +148,48 @@ class NarrowNayaPayAmountParsingTests(unittest.TestCase):
         self.assertEqual(txid, "SADAPKKA202609241090215740392466")
         self.assertIsNone(amount)
         self.assertEqual(total, Decimal("1.00"))
+
+
+class BankCatalogTests(unittest.TestCase):
+    def test_committed_catalog_contains_bank_and_wallet_profiles(self):
+        with patch.dict(os.environ, {}, clear=True):
+            profiles = _load_bank_profiles()
+            self.assertGreaterEqual(len(profiles), 50)
+            self.assertIn("nayapay", profiles)
+            self.assertIn("hbl", profiles)
+            self.assertIn("jazzcash", profiles)
+            self.assertIn("mashreq-bank", profiles)
+
+    def test_only_verified_nayapay_template_is_enabled_by_default(self):
+        with patch.dict(os.environ, {}, clear=True):
+            profiles = _load_bank_profiles()
+            adapters = load_adapters(profiles)
+            self.assertEqual(set(adapters), {"nayapay"})
+            self.assertFalse(profiles["hbl"]["enabled"])
+            self.assertEqual(profiles["hbl"]["sender_allowlist"], [])
+            self.assertIsNone(profiles["hbl"]["amount_regex"])
+
+    def test_committed_nayapay_adapter_parses_label_value_template(self):
+        with patch.dict(os.environ, {}, clear=True):
+            profile = _load_bank_profiles()["nayapay"]
+        message = (
+            "Transaction ID\nSADAPKKA202609241090215740392466\n"
+            "Amount Received\nRs. 1\nTotal Amount\nRs. 1"
+        )
+        txid, amount, total = parse_email_fields(message, profile)
+        self.assertEqual(txid, "SADAPKKA202609241090215740392466")
+        self.assertEqual(amount, Decimal("1.00"))
+        self.assertEqual(total, Decimal("1.00"))
+
+    def test_bank_directory_exposes_configuration_status(self):
+        with patch.dict(os.environ, {}, clear=True):
+            directory = bank_directory()
+        by_id = {item["id"]: item for item in directory}
+        self.assertIn("nayapay", by_id)
+        self.assertTrue(by_id["nayapay"]["configured"])
+        self.assertIn("hbl", by_id)
+        self.assertFalse(by_id["hbl"]["configured"])
+        self.assertEqual(by_id["hbl"]["status"], "needs_verified_email_sample")
 
 
 if __name__ == "__main__":
