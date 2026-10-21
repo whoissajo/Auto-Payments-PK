@@ -387,10 +387,11 @@ def bank_directory() -> list[dict[str, Any]]:
         }
         if profile.get("alias_for"):
             item["alias_for"] = profile["alias_for"]
-        if profile.get("source_urls"):
-            item["source_urls"] = profile["source_urls"]
-        if profile.get("research_note"):
-            item["note"] = profile["research_note"]
+        # Notes are optional display metadata; public source URLs are not part of
+        # the adapter schema or public bank directory response.
+        note = profile.get("note") or profile.get("research_note")
+        if isinstance(note, str) and note.strip():
+            item["note"] = note.strip()
         result.append(item)
 
     result.sort(key=lambda item: item["name"].casefold())
