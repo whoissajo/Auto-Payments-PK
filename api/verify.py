@@ -1,5 +1,4 @@
 import logging
-import re
 from http.server import BaseHTTPRequestHandler
 
 from api._shared import (
