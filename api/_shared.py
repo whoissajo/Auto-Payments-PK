@@ -13,6 +13,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass
+from pathlib import Path
 from datetime import datetime, timezone
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from email import policy
@@ -200,44 +201,105 @@ def parse_money(value: Any, field: str = "amount") -> Decimal:
     return amount.quantize(CENT, rounding=ROUND_HALF_UP)
 
 
-def load_adapters() -> dict[str, dict[str, Any]]:
-    adapters: dict[str, dict[str, Any]] = {"nayapay": dict(NAYAPAY_ADAPTER)}
-    raw = os.environ.get("BANK_ADAPTERS_JSON", "").strip()
-    if not raw:
-        return adapters
+def _load_bank_profiles() -> dict[str, dict[str, Any]]:
+    """Load the committed catalog, then apply optional environment overrides.
 
+    Profiles with enabled=false are catalog entries only; they are never used
+    to verify payments. Exact senders and parsers must be tested per institution.
+    """
+    profiles: dict[str, dict[str, Any]] = {
+        "nayapay": {
+            **NAYAPAY_ADAPTER,
+            "enabled": True,
+            "status": "configured",
+            "institution_type": "emi",
+        }
+    }
+
+    catalog_path = Path(__file__).resolve().parent.parent / "BANK_ADAPTERS_JSON.json"
     try:
-        custom = json.loads(raw)
-    except json.JSONDecodeError as exc:
+        with catalog_path.open("r", encoding="utf-8") as catalog_file:
+            catalog = json.load(catalog_file)
+    except FileNotFoundError:
+        # Keep the built-in, tested NayaPay adapter as a fallback for local use.
+        catalog = {}
+    except (OSError, json.JSONDecodeError) as exc:
         raise ServiceError(
             503,
             "adapter_configuration_invalid",
-            "BANK_ADAPTERS_JSON is not valid JSON.",
+            "BANK_ADAPTERS_JSON.json could not be read or is not valid JSON.",
         ) from exc
 
-    if not isinstance(custom, dict):
-        raise ServiceError(503, "adapter_configuration_invalid", "BANK_ADAPTERS_JSON must be a JSON object.")
+    if not isinstance(catalog, dict):
+        raise ServiceError(503, "adapter_configuration_invalid", "BANK_ADAPTERS_JSON.json must contain a JSON object.")
 
-    for slug, config in custom.items():
+    for slug, config in catalog.items():
+        if slug in ("_meta", "$meta"):
+            continue
+        if not isinstance(config, dict):
+            raise ServiceError(503, "adapter_configuration_invalid", f"Bank profile {slug} must be an object.")
+        profiles[slug] = config
+
+    # Environment definitions intentionally override the committed profile for
+    # that slug. Useful for private/test overrides, but secrets never belong here.
+    raw = os.environ.get("BANK_ADAPTERS_JSON", "").strip()
+    if raw:
+        try:
+            custom = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            raise ServiceError(
+                503,
+                "adapter_configuration_invalid",
+                "BANK_ADAPTERS_JSON is not valid JSON.",
+            ) from exc
+
+        if not isinstance(custom, dict):
+            raise ServiceError(503, "adapter_configuration_invalid", "BANK_ADAPTERS_JSON must be a JSON object.")
+
+        for slug, config in custom.items():
+            if slug in ("_meta", "$meta"):
+                continue
+            profiles[slug] = config
+
+    return profiles
+
+
+def load_adapters(profiles: dict[str, dict[str, Any]] | None = None) -> dict[str, dict[str, Any]]:
+    """Return only enabled and fully validated email adapters."""
+    if profiles is None:
+        profiles = _load_bank_profiles()
+
+    adapters: dict[str, dict[str, Any]] = {}
+    for slug, config in profiles.items():
         if not isinstance(slug, str) or not re.fullmatch(r"[a-z0-9][a-z0-9-]{1,39}", slug):
-            raise ServiceError(503, "adapter_configuration_invalid", "A bank adapter has an invalid slug.")
+            raise ServiceError(503, "adapter_configuration_invalid", f"Bank adapter has an invalid slug: {slug!r}.")
         if not isinstance(config, dict):
             raise ServiceError(503, "adapter_configuration_invalid", f"Adapter {slug} must be an object.")
 
         name = config.get("name")
+        if not isinstance(name, str) or not name.strip() or len(name) > 150:
+            raise ServiceError(503, "adapter_configuration_invalid", f"Adapter {slug} requires a valid name.")
+
+        enabled = config.get("enabled", True)
+        if not isinstance(enabled, bool):
+            raise ServiceError(503, "adapter_configuration_invalid", f"Adapter {slug} enabled must be true or false.")
+        if not enabled:
+            # A nonempty profile is not an active integration. Do not guess senders,
+            # regexes, or transaction formats for banks without verified fixtures.
+            continue
+
         senders = config.get("sender_allowlist")
         tx_regex = config.get("transaction_id_regex")
         amount_regex = config.get("amount_regex")
         total_regex = config.get("total_amount_regex")
 
-        if not isinstance(name, str) or not name.strip() or len(name) > 100:
-            raise ServiceError(503, "adapter_configuration_invalid", f"Adapter {slug} requires a name.")
-        if not isinstance(senders, list) or not senders or any(not isinstance(s, str) for s in senders):
+        if not isinstance(senders, list) or not senders or any(not isinstance(sender, str) for sender in senders):
             raise ServiceError(
                 503,
                 "adapter_configuration_invalid",
-                f"Adapter {slug} requires sender_allowlist with exact email addresses.",
+                f"Enabled adapter {slug} requires an exact sender_allowlist.",
             )
+
         normalized_senders: list[str] = []
         for sender in senders:
             parsed = parseaddr(sender.strip())[1].lower()
@@ -248,13 +310,15 @@ def load_adapters() -> dict[str, dict[str, Any]]:
                     f"Adapter {slug} contains an invalid sender address.",
                 )
             normalized_senders.append(parsed)
+        if len(set(normalized_senders)) != len(normalized_senders):
+            normalized_senders = list(dict.fromkeys(normalized_senders))
 
         for label, pattern in (("transaction_id_regex", tx_regex), ("amount_regex", amount_regex)):
             if not isinstance(pattern, str) or not pattern or len(pattern) > 1000:
                 raise ServiceError(
                     503,
                     "adapter_configuration_invalid",
-                    f"Adapter {slug} requires {label}.",
+                    f"Enabled adapter {slug} requires {label}.",
                 )
             try:
                 compiled = re.compile(pattern, re.IGNORECASE | re.DOTALL)
@@ -289,26 +353,47 @@ def load_adapters() -> dict[str, dict[str, Any]]:
             "transaction_id_regex": tx_regex,
             "amount_regex": amount_regex,
             "total_amount_regex": total_regex,
+            "status": "configured",
+            "institution_type": config.get("institution_type"),
         }
 
     return adapters
 
 
 def bank_directory() -> list[dict[str, Any]]:
-    adapters = load_adapters()
+    profiles = _load_bank_profiles()
+    adapters = load_adapters(profiles)
     names = {slug: name for slug, name in BANK_DIRECTORY}
-    for slug, adapter in adapters.items():
-        names[slug] = adapter["name"]
 
-    result = []
-    for slug, name in sorted(names.items(), key=lambda item: item[1].casefold()):
-        configured = slug in adapters
-        result.append({
+    result: list[dict[str, Any]] = []
+    all_slugs = set(names) | set(profiles)
+    for slug in sorted(all_slugs):
+        if slug in ("_meta", "$meta"):
+            continue
+        profile = profiles.get(slug, {})
+        adapter = adapters.get(slug)
+        name = (adapter or profile).get("name") or names.get(slug)
+        if not name:
+            continue
+
+        configured = adapter is not None
+        status = "configured" if configured else profile.get("status", "needs_verified_email_sample")
+        item: dict[str, Any] = {
             "id": slug,
             "name": name,
             "configured": configured,
-            "status": "configured" if configured else "adapter_required",
-        })
+            "status": status,
+            "institution_type": profile.get("institution_type", "bank"),
+        }
+        if profile.get("alias_for"):
+            item["alias_for"] = profile["alias_for"]
+        if profile.get("source_urls"):
+            item["source_urls"] = profile["source_urls"]
+        if profile.get("research_note"):
+            item["note"] = profile["research_note"]
+        result.append(item)
+
+    result.sort(key=lambda item: item["name"].casefold())
     return result
 
 
